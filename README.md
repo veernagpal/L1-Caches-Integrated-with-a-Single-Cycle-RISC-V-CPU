@@ -9,6 +9,8 @@ This project explores how different L1 data cache organizations affect processor
 
 The system consists of a single-cycle RISC-V CPU connected to an L1 data cache, which interfaces with a simulated high-latency main memory. The CPU issues load and store requests to the cache. On a cache hit, data is served directly from the cache. On a miss, the cache fetches a 128-bit block from main memory and stalls the CPU until the access is complete.
 
+RISC-V CPU → L1 Data Cache → 128-bit Block Data Memory
+
 Three cache organizations were implemented separately and integrated with the same CPU and memory subsystem:
 
       - Direct-Mapped L1 Cache
