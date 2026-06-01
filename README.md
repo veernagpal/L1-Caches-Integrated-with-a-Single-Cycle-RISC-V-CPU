@@ -220,3 +220,13 @@ Clean miss:
 Dirty miss:
 
       IDLE → TAG_CHECK → WRITEBACK → FILL → UPDATE → DONE
+
+
+
+
+
+
+
+
+
+
