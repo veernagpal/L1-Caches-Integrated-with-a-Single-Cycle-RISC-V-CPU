@@ -221,10 +221,109 @@ Dirty miss:
 
       IDLE → TAG_CHECK → WRITEBACK → FILL → UPDATE → DONE
 
+Testing and Verification
 
+Before running the final stress test, each cache mapping was verified separately using smaller directed test cases. These smaller tests were used to check individual cache operations like load miss, load hit, store hit, store miss, write-allocate, clean eviction, dirty eviction, writeback, and CPU stalling using `mem_wait`.
 
+Here - 
 
+Before running this test, the data memory was initialized with known values so that the final output could be checked clearly.
 
+    Address 0x00 = 0x11111111
+    Address 0x04 = 0x22222222
+    Address 0x08 = 0x33333333
+    Address 0x0C = 0x44444444
+
+    Address 0x10 = 0x55555555
+    Address 0x14 = 0x66666666
+    Address 0x18 = 0x77777777
+    Address 0x1C = 0x88888888
+
+    Address 0x80 = 0xAAAAAAAA
+    Address 0x84 = 0xBBBBBBBB
+    Address 0x88 = 0xCCCCCCCC
+    Address 0x8C = 0xDDDDDDDD
+
+The same stress test program was executed on the direct-mapped, fully associative, and 2-way set-associative caches. Since the actual program was the same for all three designs, the expected final register values were the same. The only expected difference was in the hit and miss count, because each cache maps memory blocks differently.
+
+The expected hit and miss counts for the final stress test were:
+
+    Direct-Mapped Cache:
+    hit_count  = 12
+    miss_count = 16
+
+    Fully Associative Cache:
+    hit_count  = 25
+    miss_count = 3
+
+    2-Way Set-Associative Cache:
+    hit_count  = 25
+    miss_count = 3
+
+The expected final register values were:
+
+    x5  = 0x22222222
+    x6  = 0x33333333
+    x7  = 0xAAAAAAAA
+    x8  = 0xBBBBBBBB
+
+    x9  = 0x22222222
+    x10 = 0x55555555
+    x11 = 0x66666666
+    x12 = 0xAAAAAAAA
+
+    x13 = 0x22222222
+    x14 = 0xAAAAAAAA
+    x15 = 0xCCCCCCCC
+    x16 = 0x44444444
+
+    x17 = 0xAAAAAAAA
+    x18 = 0x11111111
+    x19 = 0x55555555
+    x20 = 0x33333333
+
+    x21 = 0x22222222
+    x22 = 0xAAAAAAAA
+    x23 = 0x33333333
+    x24 = 0x22222222
+
+    x25 = 0xAAAAAAAA
+    x26 = 0xBBBBBBBB
+    x27 = 0xAAAAAAAA
+    x28 = 0xBBBBBBBB
+
+After running the simulation, these same hit counts, miss counts, and final register values were obtained for the respective cache designs. The waveform outputs were also checked to confirm the internal cache behavior, including cache hits, misses, dirty updates, writebacks, and reloads after eviction.
+      
+      Direct Mapped Cache = Waveform
+<img width="1817" height="747" alt="image" src="https://github.com/user-attachments/assets/3e0bae4f-122f-49a9-98a4-4fba1b862259" />
+
+      Fully Associative Cache - Waveform
+<img width="1721" height="792" alt="image" src="https://github.com/user-attachments/assets/2ec2e8ca-15db-45e7-a427-d1ba4f59ce4e" />
+
+      Set Associative Cache - Waveform
+<img width="1635" height="737" alt="image" src="https://github.com/user-attachments/assets/d3ec4e54-1f66-48f9-85a0-b4888551eba7" />
+
+The direct-mapped cache had more misses because some of the blocks used in the program mapped to the same cache line and replaced each other. The fully associative and 2-way set-associative caches had the same hit and miss count for this particular test because the accessed blocks could be held in cache without extra conflicts.
+
+Since all three caches produced the same final register values, the test confirmed that the implementations were functionally correct. The different hit and miss counts show how the cache organization affects performance.
+
+In Conclusion : 
+
+All three cache designs used the same cache size, block size, write-back policy, and write-allocate policy. The main difference was how each design placed memory blocks inside the cache. The direct-mapped cache was the simplest hardware design. Each block had only one possible cache line, so it needed only one tag comparison per access. This made it simple, but it also caused more conflict misses. The fully associative cache was the most flexible design. A block could be placed in any cache line, which reduced conflict misses. However, it required more hardware because all cache lines had to be checked in parallel. The 2-way set-associative cache was a middle ground. Each block mapped to one set, but it could be placed in either of the two ways inside that set. This reduced conflict misses compared to the direct-mapped cache while keeping the hardware simpler than the fully associative cache.
+
+This project helped me understand how cache organization affects both hardware complexity and performance. Even though all three caches produced the same correct program output, their hit and miss counts were different because of how each cache maps and replaces memory blocks.
+
+The direct-mapped cache was simple but had more conflict misses. The fully associative cache reduced conflicts but required more hardware. The 2-way set-associative cache gave a good balance between the two.
+
+Future Work and Improvemeents
+
+      - Add support for byte and halfword load/store instructions. This project mainly focuses on word-level load and store operations.
+      
+      - Add an instruction cache along with the data cache to make the CPU memory system more complete.
+      
+      - Integrate the cache with a pipelined RISC-V CPU instead of a single-cycle CPU. This would make stall handling and memory hazards more realistic.
+      
+      - Test the cache designs using larger benchmark programs instead of only directed test programs. This would give a better idea of how each cache performs on more realistic workloads.
 
 
 
