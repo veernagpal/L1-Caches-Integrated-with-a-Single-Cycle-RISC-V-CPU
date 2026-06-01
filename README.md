@@ -246,6 +246,48 @@ Before running this test, the data memory was initialized with known values so t
 
 The same stress test program was executed on the direct-mapped, fully associative, and 2-way set-associative caches. Since the actual program was the same for all three designs, the expected final register values were the same. The only expected difference was in the hit and miss count, because each cache maps memory blocks differently.
 
+Stress Test : 
+      
+      lw x5, 4(x0)        # load from block 0
+      lw x6, 8(x0)        # same block 0, should hit after first load
+      
+      lw x7, 128(x0)      # load from block 8
+      lw x8, 132(x0)      # same block 8, should hit
+      
+      lw x9, 4(x0)        # access block 0 again
+      lw x10, 16(x0)      # load from block 1
+      lw x11, 20(x0)      # same block 1, should hit
+      
+      sw x5, 8(x0)        # store into block 0, makes it dirty
+      lw x12, 128(x0)     # access block 8 again
+      lw x13, 8(x0)       # reload modified value from block 0
+      
+      sw x7, 20(x0)       # store into block 1, makes it dirty
+      lw x14, 20(x0)      # read back stored value from block 1
+      
+      lw x15, 136(x0)     # load another word from block 8
+      lw x16, 12(x0)      # load another word from block 0
+      
+      lw x17, 128(x0)     # access block 8 again
+      lw x18, 0(x0)       # access block 0 again
+      lw x19, 16(x0)      # access block 1 again
+      
+      sw x6, 132(x0)      # store into block 8, makes it dirty
+      lw x20, 132(x0)     # read back modified value from block 8
+      
+      lw x21, 4(x0)       # access block 0
+      lw x22, 128(x0)     # access block 8
+      lw x23, 132(x0)     # same block 8
+      
+      lw x24, 8(x0)       # check modified block 0 value
+      lw x25, 20(x0)      # check modified block 1 value
+      
+      sw x8, 12(x0)       # store into block 0 again
+      lw x26, 12(x0)      # read back modified value
+      
+      lw x27, 128(x0)     # final access to block 8
+      lw x28, 12(x0)      # final access to modified block 0
+
 The expected hit and miss counts for the final stress test were:
 
     Direct-Mapped Cache:
