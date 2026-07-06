@@ -359,7 +359,7 @@ This project helped me understand how cache organization affects both hardware c
 
 The direct-mapped cache was simple but had more conflict misses. The fully associative cache reduced conflicts but required more hardware. The 2-way set-associative cache gave a good balance between the two.
 
-Future Work and Improvemeents
+Future Work and Improvements
 
       - Add support for byte and halfword load/store instructions. This project mainly focuses on word-level load and store operations.
       
